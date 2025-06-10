@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect, useContext } from 'react';
 
 export type Balances = Record<string, number>;
