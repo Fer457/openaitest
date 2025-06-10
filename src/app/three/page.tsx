@@ -21,14 +21,22 @@ export default function ThreePage() {
     mount.appendChild(renderer.domElement);
 
     const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshNormalMaterial();
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    const cubes: THREE.Mesh[] = [];
+    for (let i = 0; i < 4; i++) {
+      const material = new THREE.MeshNormalMaterial();
+      const cube = new THREE.Mesh(geometry, material);
+      cube.position.x = (i % 2) * 1.5 - 0.75;
+      cube.position.y = Math.floor(i / 2) * 1.5 - 0.75;
+      scene.add(cube);
+      cubes.push(cube);
+    }
     camera.position.z = 2;
 
     const animate = () => {
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
+      cubes.forEach((cube, idx) => {
+        cube.rotation.x += 0.01 + idx * 0.005;
+        cube.rotation.y += 0.01 + idx * 0.005;
+      });
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     };
@@ -37,7 +45,9 @@ export default function ThreePage() {
     return () => {
       mount.removeChild(renderer.domElement);
       geometry.dispose();
-      material.dispose();
+      cubes.forEach((cube) => {
+        (cube.material as THREE.Material).dispose();
+      });
       renderer.dispose();
     };
   }, []);
